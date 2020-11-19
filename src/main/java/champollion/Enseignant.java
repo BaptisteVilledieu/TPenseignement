@@ -1,16 +1,18 @@
 package champollion;
 
+import static java.lang.Math.round;
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class Enseignant extends Personne {
 
-    private ServicePrevu myService;
-    private HashMap<UE, HashMap<TypeIntervention, Integer>> map = new HashMap<>();
-    private HashSet<Intervention> myIntervention = new HashSet<>();
+    private final ServicePrevu myService = new ServicePrevu(0,0,0);
+    private final HashMap<UE, HashMap<TypeIntervention, Integer>> map = new HashMap<>();
+    private final HashSet<Intervention> myIntervention = new HashSet<>();
 
     public Enseignant(String nom, String email) {
         super(nom, email);
+        
     }
 
     /**
@@ -21,9 +23,12 @@ public class Enseignant extends Personne {
      * @return le nombre total d'heures "équivalent TD" prévues pour cet enseignant, arrondi à l'entier le plus proche
      *
      */
-    public float heuresPrevues() {
-        float heures_totales = 0f;
-        throw new UnsupportedOperationException("Pas encore implémenté");
+    public int heuresPrevues() {
+        int heures_totales = 0;
+        for(UE mapKey : map.keySet()){
+            heures_totales += heuresPrevuesPourUE(mapKey);   
+        }
+        return heures_totales;
     }
 
     /**
@@ -35,12 +40,13 @@ public class Enseignant extends Personne {
      * @return le nombre total d'heures "équivalent TD" prévues pour cet enseignant, arrondi à l'entier le plus proche
      *
      */
-    public float heuresPrevuesPourUE(UE ue) {
+    public int heuresPrevuesPourUE(UE ue) {
         HashMap<TypeIntervention, Integer> Heures = map.get(ue);
         float heuresCM = Heures.get(TypeIntervention.CM) * 1.5f;
-        int heuresTD = Heures.
-        // TODO: Implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        int heuresTD = Heures.get(TypeIntervention.TD);
+        float heuresTP =Heures.get(TypeIntervention.TP) * 0.75f ;
+        int heuretotale = round (heuresCM + heuresTD + heuresTP);
+        return heuretotale;
     }
 
     /**
@@ -60,12 +66,14 @@ public class Enseignant extends Personne {
             Hours.put(TypeIntervention.CM, volumeCM);
             Hours.put(TypeIntervention.TD, volumeTD);
             Hours.put(TypeIntervention.TP, volumeTP);
+            map.put(ue, Hours);
         }
         else{
-            HashMap<TypeIntervention, Integer> Hours = new HashMap<>();
+            HashMap<TypeIntervention, Integer> Hours = map.get(ue);
             Hours.put(TypeIntervention.CM, Hours.get(TypeIntervention.CM)+ volumeCM);
             Hours.put(TypeIntervention.TD, Hours.get(TypeIntervention.TD)+ volumeTD);
             Hours.put(TypeIntervention.TP, Hours.get(TypeIntervention.TP)+ volumeTP);
+            map.put(ue, Hours);
         }
     }
     
@@ -76,12 +84,21 @@ public class Enseignant extends Personne {
     }
     
     public int HeuresPlanifiees(){
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        int heuresPlan = 0;
+        for(Intervention intervention : myIntervention){
+            heuresPlan += intervention.getDuree();
+        }
+        return heuresPlan;
     }
     
     
     public boolean enSousService(){
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        if(heuresPrevues()<HeuresPlanifiees()){
+            return true; 
+        }
+        else{
+            return false;
+        }
     }
 
 }
