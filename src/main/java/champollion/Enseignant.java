@@ -1,8 +1,13 @@
 package champollion;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 public class Enseignant extends Personne {
 
-    // TODO : rajouter les autres méthodes présentes dans le diagramme UML
+    private ServicePrevu myService;
+    private HashMap<UE, HashMap<TypeIntervention, Integer>> map = new HashMap<>();
+    private HashSet<Intervention> myIntervention = new HashSet<>();
 
     public Enseignant(String nom, String email) {
         super(nom, email);
@@ -16,8 +21,8 @@ public class Enseignant extends Personne {
      * @return le nombre total d'heures "équivalent TD" prévues pour cet enseignant, arrondi à l'entier le plus proche
      *
      */
-    public int heuresPrevues() {
-        // TODO: Implémenter cette méthode
+    public float heuresPrevues() {
+        float heures_totales = 0f;
         throw new UnsupportedOperationException("Pas encore implémenté");
     }
 
@@ -30,7 +35,10 @@ public class Enseignant extends Personne {
      * @return le nombre total d'heures "équivalent TD" prévues pour cet enseignant, arrondi à l'entier le plus proche
      *
      */
-    public int heuresPrevuesPourUE(UE ue) {
+    public float heuresPrevuesPourUE(UE ue) {
+        HashMap<TypeIntervention, Integer> Heures = map.get(ue);
+        float heuresCM = Heures.get(TypeIntervention.CM) * 1.5f;
+        int heuresTD = Heures.
         // TODO: Implémenter cette méthode
         throw new UnsupportedOperationException("Pas encore implémenté");
     }
@@ -44,7 +52,35 @@ public class Enseignant extends Personne {
      * @param volumeTP le volume d'heures de TP
      */
     public void ajouteEnseignement(UE ue, int volumeCM, int volumeTD, int volumeTP) {
-        // TODO: Implémenter cette méthode
+        myService.setVolumeCM(myService.getVolumeCM()+volumeCM);
+        myService.setVolumeTD(myService.getVolumeTD()+volumeTD);
+        myService.setVolumeTP(myService.getVolumeTP()+volumeTP);
+        if(map.get(ue)==null){
+            HashMap<TypeIntervention, Integer> Hours = new HashMap<>();
+            Hours.put(TypeIntervention.CM, volumeCM);
+            Hours.put(TypeIntervention.TD, volumeTD);
+            Hours.put(TypeIntervention.TP, volumeTP);
+        }
+        else{
+            HashMap<TypeIntervention, Integer> Hours = new HashMap<>();
+            Hours.put(TypeIntervention.CM, Hours.get(TypeIntervention.CM)+ volumeCM);
+            Hours.put(TypeIntervention.TD, Hours.get(TypeIntervention.TD)+ volumeTD);
+            Hours.put(TypeIntervention.TP, Hours.get(TypeIntervention.TP)+ volumeTP);
+        }
+    }
+    
+    
+    public void ajouteIntervention(Intervention e) {
+        myIntervention.add(e);
+
+    }
+    
+    public int HeuresPlanifiees(){
+        throw new UnsupportedOperationException("Pas encore implémenté");
+    }
+    
+    
+    public boolean enSousService(){
         throw new UnsupportedOperationException("Pas encore implémenté");
     }
 
